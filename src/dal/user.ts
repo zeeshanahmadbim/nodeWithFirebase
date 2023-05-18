@@ -2,17 +2,18 @@ import { DocumentData, Firestore, addDoc, collection, deleteDoc, doc, getDoc, ge
 import {BaseService} from './types';
 import { getFirebaseDB } from '../integrations';
 import { Request } from 'express';
+import { User, userConverter } from '../db';
 
 
 function userService():BaseService{
     const db = getFirebaseDB();
-    const collectionRef = collection(db, "users");
+    const collectionRef = collection(db, "users").withConverter(userConverter);
     
     async function list(){
             const querySnapshot = await getDocs(collectionRef);
             const data: DocumentData[] = [];
             querySnapshot.forEach((doc) => {
-                data.push({id: doc.id, ...doc.data()});
+              data.push(doc.data());
             });
 
         return data;
@@ -21,7 +22,7 @@ function userService():BaseService{
     async function getById(req: Request){
       const { id } = req.params;
 
-      const docRef = doc(db, "users", id);
+      const docRef = doc(db, "users", id).withConverter(userConverter);
       const docSnap = await getDoc(docRef);
 
       if(docSnap.exists()){
@@ -34,12 +35,12 @@ function userService():BaseService{
     async function create(req: Request){
         try {
             const {firstName, lastName, gender} = req.body;
+            const user = new User({firstName, lastName, gender});
 
-            const docRef = await addDoc(collectionRef, {
-              firstName, lastName, gender
-            });
+            const docRef = await addDoc(collectionRef, user);
+            const data = (await getDoc(docRef)).data();
 
-            return docRef.id;
+            return data;
           } catch (e) {
             console.error("Error adding document: ", e);
           }
