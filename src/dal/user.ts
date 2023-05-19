@@ -3,11 +3,13 @@ import {BaseService} from './types';
 import { getFirebaseDB } from '../integrations';
 import { Request } from 'express';
 import { User, userConverter } from '../db';
+import { updateRecord } from './common';
 
+const COLLECTION_NAME = 'users';
 
 function userService():BaseService{
     const db = getFirebaseDB();
-    const collectionRef = collection(db, "users").withConverter(userConverter);
+    const collectionRef = collection(db, COLLECTION_NAME).withConverter(userConverter);
     
     async function list(){
             const querySnapshot = await getDocs(collectionRef);
@@ -22,7 +24,7 @@ function userService():BaseService{
     async function getById(req: Request){
       const { id } = req.params;
 
-      const docRef = doc(db, "users", id).withConverter(userConverter);
+      const docRef = doc(db, COLLECTION_NAME, id).withConverter(userConverter);
       const docSnap = await getDoc(docRef);
 
       if(docSnap.exists()){
@@ -48,16 +50,7 @@ function userService():BaseService{
     }
     
     async function update(req: Request){
-        const {id, ...data} = req.body;
-        const docRef = doc(db, "users", id);
-        try {
-          await updateDoc(docRef,data);  
-          return "Data updated";
-        } catch (error) {
-          console.error(`${error}`)
-        }
-        
-        return;
+      return updateRecord({dbRef:db, collectionName: COLLECTION_NAME, data: req.body});
     }
     
     async function remove(req: Request){

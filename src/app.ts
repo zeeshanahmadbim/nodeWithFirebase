@@ -1,5 +1,6 @@
 import express,{Express} from 'express';
 import createApiRoutes from './routes';
+import cors from 'cors';
 
 let app:Express;
 
@@ -13,8 +14,9 @@ function start(){
         return app;
     }
     app = express();
+    app.use(cors())
     app.use(express.json());
-    app.use(express.urlencoded())
+    app.use(express.urlencoded());
     useRestRoutes();   
 
     return app;

@@ -1,4 +1,5 @@
 import { DocumentData, DocumentSnapshot, SnapshotOptions } from "firebase/firestore";
+
 interface IUser{
     id?: string
     firstName: string
