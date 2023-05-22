@@ -4,7 +4,7 @@ interface ITask{
     id?: string
     description: string
     status: string
-    date?: string
+    date?: Date | string
 }
 
 class Task implements ITask{
@@ -13,7 +13,7 @@ class Task implements ITask{
     public status;
     public date;
 
-    constructor({id, description, status, date}: ITask){
+    constructor({id, description, status='open', date= new Date()}: ITask){
         this.id = id;
         this.description = description;
         this.status = status;

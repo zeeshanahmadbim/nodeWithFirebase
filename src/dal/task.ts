@@ -34,12 +34,12 @@ function taskService():BaseService{
     async function create(req: Request){
         try {
             const {description, status} = req.body;
-            const task = new Task({description, status});
+            const task = new Task({description, status: status || 'open'});
             const docRef = await addDoc(collectionRef, task);
     
             const data = (await getDoc(docRef)).data();
     
-            return data;    
+            return data;
         } catch (error) {
             console.error(`${error}`);
         }
