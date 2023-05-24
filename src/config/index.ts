@@ -5,7 +5,7 @@ let config:Config;
 
 function loadConfig(){
     dotenv.config();
-    const env = process.env; 
+    const env = process.env;
     config = {
         firebaseConfig:{
             apiKey: env?.apiKey || '',
@@ -22,7 +22,7 @@ function loadConfig(){
 }
 
 function getConfig():Config{
-    if(config) return config;
+    if(config) return config
     return loadConfig();
 }
 
